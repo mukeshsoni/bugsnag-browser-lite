@@ -18,7 +18,7 @@ afterEach(() => mock.teardown());
 
 test("notify function", async () => {
   const apiKey = "abc";
-  const bugsnagClient = bugsnag({ apiKey });
+  const bugsnagClient = bugsnag(apiKey);
 
   const error = new Error("check check 123");
 

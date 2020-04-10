@@ -444,7 +444,7 @@ const bugsnagClient = {
   notify,
 };
 
-export default function bugsnag({ apiKey }: { apiKey: string }) {
+export default function bugsnag(apiKey: string) {
   config.apiKey = apiKey;
 
   return bugsnagClient;
