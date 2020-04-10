@@ -395,6 +395,11 @@ function detectDeviceInfo(): DeviceInfo {
   };
 }
 
+interface Options {
+  metaData?: object;
+  user?: UserInfo;
+}
+
 // Javascript Error object contains a `name` property which gives the type of
 // error. E.g. SyntaxError, TypeError, RangeError, EvalError
 // User can create their own custom error too and give it a custom name
@@ -425,16 +430,10 @@ export function prepareBugsnagReport(
           releaseStage: "development",
         },
         metaData: opts ? opts.metaData : undefined,
+        user: opts ? opts.user : undefined,
       },
     ],
   };
-}
-
-interface Options {
-  metaData?: object;
-  severity?: Severity;
-  user?: UserInfo;
-  device?: DeviceInfo;
 }
 
 function notify(error: NotifiableError, opts?: Options) {
