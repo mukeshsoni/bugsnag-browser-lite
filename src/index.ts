@@ -398,7 +398,11 @@ function detectDeviceInfo(): DeviceInfo {
 // Javascript Error object contains a `name` property which gives the type of
 // error. E.g. SyntaxError, TypeError, RangeError, EvalError
 // User can create their own custom error too and give it a custom name
-export function prepareBugsnagReport(config: Config, error: NotifiableError) {
+export function prepareBugsnagReport(
+  config: Config,
+  error: NotifiableError,
+  opts?: Options
+) {
   return {
     apiKey: config.apiKey,
     payloadVersion: 5,
@@ -420,9 +424,7 @@ export function prepareBugsnagReport(config: Config, error: NotifiableError) {
         app: {
           releaseStage: "development",
         },
-        metaData: {
-          super: "test",
-        },
+        metaData: opts ? opts.metaData : undefined,
       },
     ],
   };
@@ -436,7 +438,7 @@ interface Options {
 }
 
 function notify(error: NotifiableError, opts?: Options) {
-  sendReport(prepareBugsnagReport(config, error));
+  sendReport(prepareBugsnagReport(config, error, opts));
 }
 
 const bugsnagClient = {
