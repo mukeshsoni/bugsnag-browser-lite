@@ -14,9 +14,9 @@ npm install bugsnag-browser-lite -save-dev
 
 ### Usage
 ```
-import { init } from 'bugsnag-browser-lite';
+import { bugsnag } from 'bugsnag-browser-lite';
 
-const bugsnagClient = init('your-bugsnag-api-key')
+const bugsnagClient = bugsnag('your-bugsnag-api-key')
 
 // on error, call notify
 bugsnagClient.notify(error, { metaData: additionalInformation });

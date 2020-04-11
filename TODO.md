@@ -7,4 +7,4 @@ bundle.
 [ ] - add `import-size` to check for bundle sizes of the output - https://www.npmjs.com/package/import-size
 [ ] - add `husky` and `lint-staged` to catch stuff before commits. Also, add
 running tests to `lint-staged`.
-[ ] - add `rimraf` to clean up dist file before the next build
+[X] - add `rimraf` to clean up dist file before the next build
