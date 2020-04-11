@@ -1,5 +1,6 @@
 import mock from "xhr-mock";
-import bugsnag, {
+import {
+  init,
   hasStack,
   getStacktrace,
   prepareBugsnagReport,
@@ -18,7 +19,7 @@ afterEach(() => mock.teardown());
 
 test("notify function", async () => {
   const apiKey = "abc";
-  const bugsnagClient = bugsnag(apiKey);
+  const bugsnagClient = init(apiKey);
 
   const error = new Error("check check 123");
 

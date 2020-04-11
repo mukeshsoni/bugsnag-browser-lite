@@ -1,5 +1,5 @@
 import jsonStringify from "safe-json-stringify";
-import * as ErrorStackParser from "error-stack-parser";
+import ErrorStackParser from "error-stack-parser";
 import { StackFrame } from "error-stack-parser";
 
 // not sure if the notifier can be non-bugsnag thing
@@ -444,7 +444,7 @@ const bugsnagClient = {
   notify,
 };
 
-export default function bugsnag(apiKey: string) {
+export function init(apiKey: string) {
   config.apiKey = apiKey;
 
   return bugsnagClient;
