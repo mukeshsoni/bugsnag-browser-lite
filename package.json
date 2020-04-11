@@ -1,7 +1,7 @@
 {
   "name": "bugsnag-browser-lite",
   "version": "1.1.0",
-  "description": "",
+  "description": "Bugsnag error reporting on the browser",
   "main": "./dist/index.js",
   "module": "dist/bugsnag-browser-lite.esm.js",
   "umd:main": "dist/bugsnag-browser-lite.umd.production.min.js",
@@ -16,9 +16,19 @@
     "test": "jest",
     "build": "rimraf dist/ && tsdx build --name bugsnag-browser-lite --format esm,cjs,umd"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "bugsnag",
+    "browser",
+    "logger",
+    "lite",
+    "light"
+  ],
+  "author": "Mukesh Soni",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mukeshsoni/bugsnag-browser-lite.git"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-typescript": "^7.9.0",
