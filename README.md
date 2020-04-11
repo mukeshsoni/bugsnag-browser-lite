@@ -6,8 +6,13 @@ only in the browser and is significantly smaller than `@bugsnag/js`.
 
 This library does not yet have auto notification on unhandled errors and exceptions.
 
-### Usage
+### Installation
 
+```
+npm install bugsnag-browser-lite -save-dev
+```
+
+### Usage
 ```
 import { init } from 'bugsnag-browser-lite';
 
@@ -16,3 +21,5 @@ const bugsnagClient = init('your-bugsnag-api-key')
 // on error, call notify
 bugsnagClient.notify(error, { metaData: additionalInformation });
 ```
+
+It's written in typescript and the types are published with the package.
