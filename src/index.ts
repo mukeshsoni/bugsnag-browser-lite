@@ -260,7 +260,7 @@ function sendReport(report: BugsnagErrorReport, cb = () => {}) {
     try {
       const url = config.notifyUrl;
       const req = new XMLHttpRequest();
-      req.onreadystatechange = function () {
+      req.onreadystatechange = function() {
         if (req.readyState === XMLHttpRequest.DONE) cb();
       };
       req.open("POST", url);
@@ -444,7 +444,7 @@ const bugsnagClient = {
   notify,
 };
 
-export function init(apiKey: string) {
+export function bugsnag(apiKey: string) {
   config.apiKey = apiKey;
 
   return bugsnagClient;

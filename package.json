@@ -1,6 +1,6 @@
 {
   "name": "bugsnag-browser-lite",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "",
   "main": "./dist/index.js",
   "module": "dist/bugsnag-browser-lite.esm.js",
