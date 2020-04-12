@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { BugsnagClient } from "./index.ts";
+import { BugsnagClient } from "./bugsnag_client";
 
 export const formatComponentStack = (str) => {
   const lines = str.split(/\s*\n\s*/g);

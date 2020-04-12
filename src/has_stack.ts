@@ -1,4 +1,4 @@
-import { NotifiableError } from "./bugsnag";
+import { NotifiableError } from "./types";
 
 export function hasStack(error: NotifiableError) {
   return (

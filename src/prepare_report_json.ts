@@ -1,6 +1,6 @@
 import jsonStringify from "safe-json-stringify";
 
-import { BugsnagErrorReport } from "./bugsnag";
+import { BugsnagErrorReport } from "./types";
 
 // const REPORT_FILTER_PATHS = [
 // "events.[].app",
