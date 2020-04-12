@@ -1,17 +1,6 @@
 import mock from "xhr-mock";
-import {
-  bugsnag,
-  hasStack,
-  getStacktrace,
-  prepareBugsnagReport,
-  notifyUrl,
-  isoDate,
-} from "./index.ts";
-
-test("hasStack", () => {
-  expect(hasStack({ stack: "blah" })).toBe(true);
-  expect(hasStack({ stacktrace: "blah" })).toBe(true);
-});
+import bugsnag from "../bugsnag.ts";
+import { notifyUrl } from "../bugsnag_client.ts";
 
 beforeEach(() => mock.setup());
 
