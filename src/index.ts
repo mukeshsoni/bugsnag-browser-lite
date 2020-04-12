@@ -1,7 +1,7 @@
 import { StackFrame } from "error-stack-parser";
 import { isoDate } from "./iso_date";
 import { sendReport } from "./delivery";
-import { ErrorBoundary } from "./bugsnag_react";
+// import { ErrorBoundary } from "./bugsnag_react";
 import { detectDeviceInfo } from "./device_info";
 import { hasStack } from "./has_stack";
 import { prepareReportJson } from "./prepare_report_json";
