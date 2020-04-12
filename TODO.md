@@ -8,3 +8,6 @@ bundle.
 [ ] - add `husky` and `lint-staged` to catch stuff before commits. Also, add
 running tests to `lint-staged`.
 [X] - add `rimraf` to clean up dist file before the next build
+[ ] - Think about ways to reduce the code size. Maybe write a simple
+error-stack-parser version. `error-stack-parser` and `stackframe` (used inside
+`error-stack-parser`) are make up 60% of the library size right now.

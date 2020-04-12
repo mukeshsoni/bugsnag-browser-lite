@@ -1,6 +1,11 @@
-import jsonStringify from "safe-json-stringify";
-import ErrorStackParser from "error-stack-parser";
 import { StackFrame } from "error-stack-parser";
+import { isoDate } from "./iso_date";
+import { sendReport } from "./delivery";
+import { ErrorBoundary } from "./bugsnag_react";
+import { detectDeviceInfo } from "./device_info";
+import { hasStack } from "./has_stack";
+import { prepareReportJson } from "./prepare_report_json";
+import { getStacktrace } from "./get_stack_trace";
 
 // not sure if the notifier can be non-bugsnag thing
 // bugsnag-js has notifier name as Bugsnag JavaScript
@@ -37,7 +42,7 @@ interface AppInfo {
 type TimeString = string;
 
 // Information about the computer/device running the app.
-interface DeviceInfo {
+export interface DeviceInfo {
   // The hostname of the server running your code, if applicable.
   hostname?: string;
   id?: string;
@@ -71,7 +76,7 @@ interface SessionInfo {
   };
 }
 
-interface BugsnagStackFrame {
+export interface BugsnagStackFrame {
   file?: string;
   lineNumber: number;
   columnNumber?: number;
@@ -185,7 +190,7 @@ interface Event {
 // The bugsnag api report format can be found here
 // https://bugsnagerrorreportingapi.docs.apiary.io/#reference/0/notify/send-error-reports
 // Have converted the type to typescript types
-interface BugsnagErrorReport {
+export interface BugsnagErrorReport {
   apiKey: string;
   payloadVersion: number; // this is fixed as per bugsnag api requirement
   notifier: Notifier;
@@ -198,7 +203,7 @@ export type NotifiableError =
   | { name: string; message: string }
   | any;
 
-interface Config {
+export interface Config {
   apiKey?: string;
   notifyUrl: string;
 }
@@ -207,193 +212,6 @@ export const notifyUrl = "https://notify.bugsnag.com";
 let config: Config = {
   notifyUrl,
 };
-
-const _pad = (n: number) => (n < 10 ? `0${n}` : n);
-// Date#toISOString
-export function isoDate() {
-  // from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
-  const d = new Date();
-  return (
-    d.getUTCFullYear() +
-    "-" +
-    _pad(d.getUTCMonth() + 1) +
-    "-" +
-    _pad(d.getUTCDate()) +
-    "T" +
-    _pad(d.getUTCHours()) +
-    ":" +
-    _pad(d.getUTCMinutes()) +
-    ":" +
-    _pad(d.getUTCSeconds()) +
-    "." +
-    (d.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
-    "Z"
-  );
-}
-
-// const REPORT_FILTER_PATHS = [
-// "events.[].app",
-// "events.[].metaData",
-// "events.[].user",
-// "events.[].breadcrumbs",
-// "events.[].request",
-// "events.[].device",
-// ];
-
-function prepareReportJson(report: BugsnagErrorReport): string {
-  let payload = jsonStringify(report, null, null);
-  if (payload.length > 10e5) {
-    delete report.events[0].metaData;
-    report.events[0].metaData = {
-      notifier: `WARNING!
-Serialized payload was ${payload.length / 10e5}MB (limit = 1MB)
-metaData was removed`,
-    };
-    payload = jsonStringify(report, null, null);
-    if (payload.length > 10e5) throw new Error("payload exceeded 1MB limit");
-  }
-  return payload;
-}
-
-function sendReport(report: BugsnagErrorReport, cb = () => {}) {
-  if (typeof XMLHttpRequest !== "undefined") {
-    try {
-      const url = config.notifyUrl;
-      const req = new XMLHttpRequest();
-      req.onreadystatechange = function() {
-        if (req.readyState === XMLHttpRequest.DONE) cb();
-      };
-      req.open("POST", url);
-      req.setRequestHeader("Content-Type", "application/json");
-      req.setRequestHeader("Bugsnag-Api-Key", config.apiKey);
-      req.setRequestHeader("Bugsnag-Payload-Version", "5");
-      req.setRequestHeader("Bugsnag-Sent-At", isoDate());
-      req.send(prepareReportJson(report));
-    } catch (e) {
-      console.error(e);
-    }
-  } else {
-    console.error("Bugsnag logger: Could not find XMLHttpRequest");
-  }
-}
-
-export function hasStack(error: NotifiableError) {
-  return (
-    !!error &&
-    (!!error.stack || !!error.stacktrace || !!error["opera#sourceloc"]) &&
-    typeof (error.stack || error.stacktrace || error["opera#sourceloc"]) ===
-      "string" &&
-    error.stack !== `${error.name}: ${error.message}`
-  );
-}
-
-function normaliseFunctionName(name: string) {
-  return /^global code$/i.test(name) ? "global code" : name;
-}
-
-// takes a stacktrace.js style stackframe (https://github.com/stacktracejs/stackframe)
-// and returns a Bugsnag compatible stackframe (https://docs.bugsnag.com/api/error-reporting/#json-payload)
-function formatStackframe(frame: StackFrame): BugsnagStackFrame {
-  const f = {
-    file: frame.fileName,
-    method: normaliseFunctionName(frame.functionName),
-    lineNumber: frame.lineNumber,
-    columnNumber: frame.columnNumber,
-  };
-  // Some instances result in no file:
-  // - calling notify() from chrome's terminal results in no file/method.
-  // - non-error exception thrown from global code in FF
-  // This adds one.
-  if (f.lineNumber > -1 && !f.file && !f.method) {
-    f.file = "global code";
-  }
-  return f;
-}
-
-export function getStacktrace(
-  error: NotifiableError
-): Array<BugsnagStackFrame> {
-  if (hasStack(error)) {
-    return ErrorStackParser.parse(error).map(formatStackframe);
-  }
-
-  return [];
-}
-
-function getOsName() {
-  let osName = "Unknown OS";
-
-  if (navigator.appVersion.indexOf("Win") != -1) osName = "Windows";
-  if (navigator.appVersion.indexOf("Mac") != -1) osName = "MacOS";
-  if (navigator.appVersion.indexOf("X11") != -1) osName = "UNIX";
-  if (navigator.appVersion.indexOf("Linux") != -1) osName = "Linux";
-
-  return osName;
-}
-
-function detectDeviceInfo(): DeviceInfo {
-  const nav = navigator;
-  const nVer = navigator.appVersion;
-  const nAgt = navigator.userAgent;
-  let browserName = navigator.appName;
-  let browserVersion = "" + parseFloat(navigator.appVersion);
-  let nameOffset, verOffset, ix;
-
-  // In Opera, the true version is after "Opera" or after "Version"
-  if ((verOffset = nAgt.indexOf("Opera")) != -1) {
-    browserName = "Opera";
-    browserVersion = nAgt.substring(verOffset + 6);
-    if ((verOffset = nAgt.indexOf("Version")) != -1)
-      browserVersion = nAgt.substring(verOffset + 8);
-  }
-  // In MSIE, the true version is after "MSIE" in userAgent
-  else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
-    browserName = "Microsoft Internet Explorer";
-    browserVersion = nAgt.substring(verOffset + 5);
-  }
-  // In Chrome, the true version is after "Chrome"
-  else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
-    browserName = "Chrome";
-    browserVersion = nAgt.substring(verOffset + 7);
-  }
-  // In Safari, the true version is after "Safari" or after "Version"
-  else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
-    browserName = "Safari";
-    browserVersion = nAgt.substring(verOffset + 7);
-    if ((verOffset = nAgt.indexOf("Version")) != -1)
-      browserVersion = nAgt.substring(verOffset + 8);
-  }
-  // In Firefox, the true version is after "Firefox"
-  else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
-    browserName = "Firefox";
-    browserVersion = nAgt.substring(verOffset + 8);
-  }
-  // In most other browsers, "name/version" is at the end of userAgent
-  else if (
-    (nameOffset = nAgt.lastIndexOf(" ") + 1) <
-    (verOffset = nAgt.lastIndexOf("/"))
-  ) {
-    browserName = nAgt.substring(nameOffset, verOffset);
-    browserVersion = nAgt.substring(verOffset + 1);
-    if (browserName.toLowerCase() == browserName.toUpperCase()) {
-      browserName = navigator.appName;
-    }
-  }
-  // trim the browserVersion string at semicolon/space if present
-  if ((ix = browserVersion.indexOf(";")) != -1)
-    browserVersion = browserVersion.substring(0, ix);
-  if ((ix = browserVersion.indexOf(" ")) != -1)
-    browserVersion = browserVersion.substring(0, ix);
-
-  return {
-    language: nav.language,
-    userAgent: nav.userAgent,
-    time: isoDate(),
-    osName: getOsName(),
-    browserName,
-    browserVersion,
-  };
-}
 
 interface Options {
   metaData?: object;
@@ -437,10 +255,21 @@ export function prepareBugsnagReport(
 }
 
 function notify(error: NotifiableError, opts?: Options) {
-  sendReport(prepareBugsnagReport(config, error, opts));
+  sendReport(config, prepareBugsnagReport(config, error, opts));
 }
 
-const bugsnagClient = {
+export interface BugsnagClient {
+  notify: (
+    error: Error,
+    opt?: {
+      // tslint:disable-next-line
+      metaData?: object;
+      user?: UserInfo;
+    }
+  ) => void;
+}
+
+const bugsnagClient: BugsnagClient = {
   notify,
 };
 
