@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { BugsnagClient } from "./bugsnag_client";
 
-export const formatComponentStack = (str) => {
+export const formatComponentStack = (str: string) => {
   const lines = str.split(/\s*\n\s*/g);
   let ret = "";
   for (let line = 0, len = lines.length; line < len; line++) {
@@ -16,27 +16,31 @@ interface Props {
   FallbackComponent?: React.ElementType<any>;
 }
 
-export class ErrorBoundary extends React.Component<Props> {
-  constructor(props) {
+interface State {
+  error: Error | null;
+}
+
+export class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       error: null,
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
     return { error };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error: Error, info: { componentStack?: string }) {
     const { bugsnagClient } = this.props;
 
-    const handledState = {
-      severity: "error",
-      unhandled: true,
-      severityReason: { type: "unhandledException" },
-    };
+    // const handledState = {
+    // severity: "error",
+    // unhandled: true,
+    // severityReason: { type: "unhandledException" },
+    // };
 
     if (info && info.componentStack) {
       info.componentStack = formatComponentStack(info.componentStack);
