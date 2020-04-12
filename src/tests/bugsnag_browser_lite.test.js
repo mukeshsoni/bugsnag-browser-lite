@@ -1,5 +1,6 @@
 import mock from "xhr-mock";
-import { bugsnag, notifyUrl } from "../index.ts";
+import bugsnag from "../bugsnag.ts";
+import { notifyUrl } from "../bugsnag_client.ts";
 
 beforeEach(() => mock.setup());
 
