@@ -1,4 +1,4 @@
-import { DeviceInfo } from "./index";
+import { DeviceInfo } from "./bugsnag";
 import { isoDate } from "./iso_date";
 
 function getOsName() {

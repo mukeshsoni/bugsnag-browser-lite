@@ -1,4 +1,4 @@
-import { BugsnagErrorReport, Config } from "./index";
+import { BugsnagErrorReport, Config } from "./bugsnag";
 import { isoDate } from "./iso_date";
 import { prepareReportJson } from "./prepare_report_json";
 

@@ -2,7 +2,7 @@ import { StackFrame } from "error-stack-parser";
 import ErrorStackParser from "error-stack-parser";
 
 import { hasStack } from "./has_stack";
-import { BugsnagStackFrame, NotifiableError } from "./index";
+import { BugsnagStackFrame, NotifiableError } from "./bugsnag";
 
 function normaliseFunctionName(name?: string) {
   if (name !== undefined) {

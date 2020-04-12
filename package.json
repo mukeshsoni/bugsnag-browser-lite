@@ -2,13 +2,14 @@
   "name": "bugsnag-browser-lite",
   "version": "1.1.1",
   "description": "Bugsnag error reporting on the browser",
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
   "module": "dist/bugsnag-browser-lite.esm.js",
   "umd:main": "dist/bugsnag-browser-lite.umd.production.min.js",
   "unpkg": "dist/bugsnag-browser-lite.umd.production.min.js",
   "jsdelivr": "dist/bugsnag-browser-lite.umd.production.min.js",
   "jsnext:main": "dist/bugsnag-browser-lite.esm.js",
-  "types": "./dist/index.d.ts",
+  "source": "src/bugsnag.ts",
+  "types": "./dist/bugsnag.d.ts",
   "files": [
     "dist"
   ],
