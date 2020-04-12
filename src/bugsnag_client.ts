@@ -2,11 +2,14 @@ import { sendReport } from "./delivery";
 import { getStacktrace } from "./get_stack_trace";
 import { detectDeviceInfo } from "./device_info";
 
-import { UserInfo, NotifiableError } from "./types";
+import { UserInfo, NotifiableError, Severity, SeverityReason } from "./types";
 
 interface Options {
   metaData?: object;
   user?: UserInfo;
+  unhandled?: boolean;
+  severity?: Severity;
+  severityReason?: SeverityReason;
 }
 
 // Javascript Error object contains a `name` property which gives the type of

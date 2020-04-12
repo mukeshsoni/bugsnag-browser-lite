@@ -114,7 +114,22 @@ interface Thread {
   type: "cocoa" | "android" | "browserjs";
 }
 
-type Severity = "error" | "warning" | "info";
+export type Severity = "error" | "warning" | "info";
+
+export interface SeverityReason {
+  type:
+    | "unhandledException"
+    | "unhandleError"
+    | "log"
+    | "unhandledPromiseRejection"
+    | "callbackErrorIntercept"
+    | "userCallbackSetSeverity"
+    | "userSpecifiedSeverity"
+    | "handledException";
+  attribute?: {
+    level: string;
+  };
+}
 
 interface Event {
   exceptions: Array<Exception>;
@@ -153,20 +168,7 @@ interface Event {
   // errors was handled and reported using Bugsnag.notify.
   unhandled?: boolean;
   severity?: Severity;
-  severityReason?: {
-    type:
-      | "unhandledException"
-      | "unhandleError"
-      | "log"
-      | "unhandledPromiseRejection"
-      | "callbackErrorIntercept"
-      | "userCallbackSetSeverity"
-      | "userSpecifiedSeverity"
-      | "handledException";
-    attribute?: {
-      level: string;
-    };
-  };
+  severityReason?: SeverityReason;
   // Information about the user affected by the error. These fields are
   // optional but highly recommended. To display custom user data alongside
   // these standard fields on the Bugsnag website, the custom data should be

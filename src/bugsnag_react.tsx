@@ -36,11 +36,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
   componentDidCatch(error: Error, info: { componentStack?: string }) {
     const { bugsnagClient } = this.props;
 
-    // const handledState = {
-    // severity: "error",
-    // unhandled: true,
-    // severityReason: { type: "unhandledException" },
-    // };
+    const handledState = {
+      severity: "error",
+      unhandled: true,
+      severityReason: { type: "unhandledException" },
+    } as const;
 
     if (info && info.componentStack) {
       info.componentStack = formatComponentStack(info.componentStack);
@@ -50,6 +50,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       metaData: {
         react: info,
       },
+      ...handledState,
     });
   }
 
