@@ -1,10 +1,6 @@
-import { StackFrame } from "error-stack-parser";
-import { isoDate } from "./iso_date";
 import { sendReport } from "./delivery";
 // import { ErrorBoundary } from "./bugsnag_react";
 import { detectDeviceInfo } from "./device_info";
-import { hasStack } from "./has_stack";
-import { prepareReportJson } from "./prepare_report_json";
 import { getStacktrace } from "./get_stack_trace";
 
 // not sure if the notifier can be non-bugsnag thing
@@ -65,22 +61,22 @@ export interface DeviceInfo {
   time?: TimeString;
 }
 
-interface SessionInfo {
-  id: string;
-  startedAt: TimeString;
-  // Details of the number of handled and unhandled events that have occurred
-  // so far in this session.
-  events: {
-    handled: number;
-    unhandled: number;
-  };
-}
+// interface SessionInfo {
+// id: string;
+// startedAt: TimeString;
+// // Details of the number of handled and unhandled events that have occurred
+// // so far in this session.
+// events: {
+// handled: number;
+// unhandled: number;
+// };
+// }
 
 export interface BugsnagStackFrame {
   file?: string;
-  lineNumber: number;
+  lineNumber?: number;
   columnNumber?: number;
-  method: string;
+  method?: string;
   inProject?: boolean;
   // The code in this file surrounding this line. This is an object containing
   // key value pairs where each key is a line number and each value is the code
@@ -204,12 +200,13 @@ export type NotifiableError =
   | any;
 
 export interface Config {
-  apiKey?: string;
+  apiKey: string;
   notifyUrl: string;
 }
 
 export const notifyUrl = "https://notify.bugsnag.com";
 let config: Config = {
+  apiKey: "",
   notifyUrl,
 };
 
@@ -222,12 +219,12 @@ interface Options {
 // error. E.g. SyntaxError, TypeError, RangeError, EvalError
 // User can create their own custom error too and give it a custom name
 export function prepareBugsnagReport(
-  config: Config,
+  apiKey: string,
   error: NotifiableError,
   opts?: Options
 ) {
   return {
-    apiKey: config.apiKey,
+    apiKey,
     payloadVersion: 5,
     notifier: {
       name: "saltside web",
@@ -255,7 +252,7 @@ export function prepareBugsnagReport(
 }
 
 function notify(error: NotifiableError, opts?: Options) {
-  sendReport(config, prepareBugsnagReport(config, error, opts));
+  sendReport(config, prepareBugsnagReport(config.apiKey, error, opts));
 }
 
 export interface BugsnagClient {

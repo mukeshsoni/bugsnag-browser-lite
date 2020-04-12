@@ -16,7 +16,7 @@ export function sendReport(
       };
       req.open("POST", url);
       req.setRequestHeader("Content-Type", "application/json");
-      req.setRequestHeader("Bugsnag-Api-Key", config.apiKey);
+      req.setRequestHeader("Bugsnag-Api-Key", config.apiKey || "");
       req.setRequestHeader("Bugsnag-Payload-Version", "5");
       req.setRequestHeader("Bugsnag-Sent-At", isoDate());
       req.send(prepareReportJson(report));

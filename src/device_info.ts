@@ -14,7 +14,6 @@ function getOsName() {
 
 export function detectDeviceInfo(): DeviceInfo {
   const nav = navigator;
-  const nVer = navigator.appVersion;
   const nAgt = navigator.userAgent;
   let browserName = navigator.appName;
   let browserVersion = "" + parseFloat(navigator.appVersion);
