@@ -41,8 +41,7 @@ export function prepareBugsnagReport(
         app: {
           releaseStage: "development",
         },
-        metaData: opts ? opts.metaData : undefined,
-        user: opts ? opts.user : undefined,
+        ...opts,
       },
     ],
   };
