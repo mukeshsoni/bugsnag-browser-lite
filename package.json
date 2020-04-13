@@ -1,6 +1,6 @@
 {
   "name": "bugsnag-browser-lite",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Bugsnag error reporting on the browser",
   "main": "dist/index.js",
   "module": "dist/bugsnag-browser-lite.esm.js",
